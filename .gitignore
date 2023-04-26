@@ -1,4 +1,5 @@
 /**/node_modules/
+/**/.datasources/
 
 # compiled output
 /**/dist
