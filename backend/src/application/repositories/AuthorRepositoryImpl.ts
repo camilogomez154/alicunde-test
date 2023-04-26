@@ -1,6 +1,6 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { CreateNewAuthorCommand } from '../useCases/Author/CreateNewAuthor/Command';
 import { AuthorEntity, IAuthorRepository } from '../../domain';
@@ -11,6 +11,10 @@ export class AuthorRepositoryImpl implements IAuthorRepository {
     @InjectRepository(AuthorEntity)
     readonly repository: Repository<AuthorEntity>,
   ) {}
+
+  getByIds(ids: string[]): Promise<AuthorEntity[]> {
+    return this.repository.find({ where: { id: In(ids) } });
+  }
 
   adaptCreateNewAuthorCommandToEntity({
     name,
@@ -23,6 +27,6 @@ export class AuthorRepositoryImpl implements IAuthorRepository {
   }
 
   getAllAuthors(): Promise<AuthorEntity[]> {
-    return this.repository.find();
+    return this.repository.find({ relations: { books: true } });
   }
 }

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import { BookEntity, IBookRepository } from '../../domain';
 import { CreateNewBookCommand } from '../useCases/Book';
+import { AuthorEntity } from '../../domain/entities/Author.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class BookRepositoryImpl implements IBookRepository<BookEntity> {
@@ -12,18 +13,15 @@ export class BookRepositoryImpl implements IBookRepository<BookEntity> {
     readonly repository: Repository<BookEntity>,
   ) {}
 
-  adaptCreateNewBookCommandToEntity({
-    title,
-    chapters,
-    pages,
-    authors,
-  }: CreateNewBookCommand): BookEntity {
-    const authorsSet = Array.from(new Set(authors));
+  adaptCreateNewBookCommandToEntity(
+    { title, chapters, pages }: CreateNewBookCommand,
+    authors: AuthorEntity[],
+  ): BookEntity {
     return this.repository.create({
-      title,
       chapters,
+      authors,
+      title,
       pages,
-      authors: authorsSet,
     });
   }
 
